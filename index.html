@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>DIKET</title>
+    <!-- ESTILOS CSS PRINCIPALES -->
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #0a0a0a;
+            color: white;
+            margin-left: 150px;
+            transition: margin-left 0.3s ease;
+        }
+
+        body.nav-closed {
+            margin-left: 0;
+        }
+
+        /* HEADER */
+        header {
+            background: black;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 100;
+        }
+
+        .toggle-nav {
+            background: gold;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-right: 15px;
+            transition: all 0.3s;
+        }
+
+        .toggle-nav:hover {
+            background: #ffd700;
+            transform: scale(1.05);
+        }
+
+        .logo {
+            font-size: 42px;
+            color: gold;
+            font-weight: bold;
+        }
+
+        .icons span {
+            margin-left: 20px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .icons span:hover {
+            transform: scale(1.2);
+        }
+
+        /* SEARCH */
+        #searchBar {
+            display: none;
+            padding: 10px;
+            width: 100%;
+        }
+
+        /* NAV */
+        nav {
+            background: #111;
+            padding: 10px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 150px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding-top: 20px;
+            transition: transform 0.3s ease;
+            z-index: 99;
+        }
+
+        nav.closed {
+            transform: translateX(-150px);
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: white;
+            margin: 0;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 12px;
+            transition: all 0.3s;
+        }
+
+        nav button:hover {
+            background: gold;
+            color: black;
+            border-radius: 5px;
+        }
+
+        /* PRODUCTS */
+        .container {
+            padding: 20px;
+        }
+
+        .card {
+            background: #1a1a1a;
+            padding: 10px;
+            margin: 10px;
+            display: inline-block;
+            width: 200px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .card a {
+            color: gold;
+            text-decoration: none;
+        }
+
+        button.buy {
+            background: gold;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        button.buy:hover {
+            background: #ffd700;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        button.buy:active {
+            transform: translateY(0);
+        }
+
+        /* CART */
+        #cart {
+            position: fixed;
+            right: 0;
+            top: 0;
+            background: #111;
+            width: 250px;
+            height: 100%;
+            display: none;
+            padding: 10px;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .back-btn {
+            background: gold;
+            border: none;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #ffd700;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .back-btn:active {
+            transform: translateY(0);
+        }
+
+        /* SECCIÓN DE INICIO */
+        .inicio-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 80px);
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(10, 10, 10, 0.8) 100%), url('https://i.postimg.cc/kGZNN0m3/Whats-App-Image-2026-03-02-at-9-55-55-PM.jpg') center/cover;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .inicio-section h1 {
+            font-size: 60px;
+            color: gold;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .inicio-section p {
+            font-size: 20px;
+            color: #ccc;
+            margin-bottom: 40px;
+            max-width: 600px;
+        }
+
+        .inicio-btn {
+            background: gold;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+            color: black;
+        }
+
+        .inicio-btn:hover {
+            background: #ffd700;
+            transform: scale(1.05);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+            /* AREA EDITABLE PARA HISTORIA */
+            .editable-area {
+                background: #121212;
+                border: 2px dashed #2b2b2b;
+                min-height: 60vh;
+                padding: 20px;
+                border-radius: 8px;
+                color: #ddd;
+                outline: none;
+                white-space: pre-wrap;
+            }
+            .editable-area:empty:before {
+                content: "Escribe tu historia aquí...";
+                color: #666;
+            }
+    </style>
+</head>
+<body>
+    <!-- HEADER: logo y accesos rápidos -->
+    <header>
+        <button class="toggle-nav" onclick="toggleNav()">☰</button>
+        <div class="logo">DIKET</div>
+        <div class="icons">
+            <span onclick="toggleSearch()">🔍</span>
+            <span onclick="toggleCart()">🛒</span>
+        </div>
+    </header>
+
+    <!-- BARRA DE BÚSQUEDA OCULTA -->
+    <input type="text" id="searchBar" placeholder="Buscar..." onkeyup="search()">
+
+    <!-- NAVEGACIÓN PRINCIPAL: categorías y filtros -->
+    <nav>
+        <button onclick="goToInicio()">🏠 Inicio</button>
+        <button onclick="showCategory('mujer')">Mujer</button>
+        <button onclick="showCategory('hombre')">Hombre</button>
+        <button onclick="goToHistoria()">Sobre nosotros</button>
+        <button onclick="goToPodcast()">🎙️ Podcast</button>
+    </nav>
+
+    <!-- SECCIÓN DE INICIO -->
+    <section id="inicioSection" class="inicio-section">
+        <h1>DIKET</h1>
+        <p id="inicioTexto">Bienvenido a DIKET. Descubre nuestra colección exclusiva de moda elegante y sofisticada.</p>
+        <button class="inicio-btn" onclick="goToTienda()">Ir a la Tienda</button>
+    </section>
+
+    <!-- SECCIÓN DE PRODUCTOS -->
+    <section id="productsSection" class="hidden">
+        <!-- CONTENEDOR DE PRODUCTOS -->
+        <div class="container" id="products"></div>
+
+        <!-- SECCIÓN DE CONTACTO -->
+        <section style="background:#111; padding:20px; text-align:center; margin-top:20px;">
+            <h2 style="color:gold;">Contacto</h2>
+            <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin-top:15px;">
+                <div style="background:#1a1a1a; padding:15px; border-radius:10px; width:200px;">
+                    <h3>Email</h3>
+                    <p>contacto@diket.com</p>
+                </div>
+                <div style="background:#1a1a1a; padding:15px; border-radius:10px; width:200px;">
+                    <h3>WhatsApp</h3>
+                    <p>+52 55 1234 5678</p>
+                </div>
+                <div style="background:#1a1a1a; padding:15px; border-radius:10px; width:200px;">
+                    <h3>Instagram</h3>
+                    <p>@DIKETfashion</p>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <!-- SECCIÓN DE HISTORIA (EDITABLE) -->
+    <section id="historiaSection" class="hidden">
+        <div class="container" style="max-width: 900px; margin: 0 auto; padding: 40px 30px;">
+            <h2 style="color:gold; font-size: 48px; margin-bottom: 30px; text-align: center;">Historia de DIKET</h2>
+            <div id="historiaEditor" class="editable-area" style="user-select: none; -webkit-user-select: none; font-size: 22px; line-height: 2.2; margin-bottom: 50px; padding: 30px; background: #121212; border-left: 4px solid gold; text-align: justify;">Durante mucho tiempo la moda ha evolucionando algunas prendas se arruinaron, otras prendas cambiaron para tener más estilo. Sin embargo, actualmente la moda en México no ha cambiado, siempre ha sido lo mismo sin cambios significativos. Así que decidimos cambiar esa parte e implantar una nueva moda. 
+
+Es entonces cuando llega DIKET, el cual impone moda en trajes y vestidos de gala elegantes y sofisticados. Se le preguntó a algunas personas sobre su tipo de hombre y cómo se viste, las chicas contestaron que de traje se veían más atractivos que con la moda actual. A los hombres también se les preguntó qué estilo de ropa les gustaba más y prefirieron un vestido elegante y sexy a la ropa que usualmente usan para vestirse.
+
+Fue entonces cuando empezamos a diseñar trajes que se adapten bien al cuerpo de un hombre y los haga ver imponentes y atractivos a las señoritas. Diseñamos vestidos de gala que resaltan las facciones más sexys, dejando impresionados a cualquiera que los observe. Porque con DIKET brillas y dejas huella.</div>
+            
+            <div style="background: #1a1a1a; padding: 30px; border-radius: 10px; margin-bottom: 50px; border: 2px solid gold;">
+                <h3 style="color: gold; font-size: 32px; text-align: center; margin-bottom: 25px;">Equipo DIKET</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 20px;">
+                    <div style="padding: 15px; background: #111; border-radius: 8px; border-left: 3px solid gold;">
+                        <p style="margin: 10px 0;"><strong style="color: gold;">1.</strong> Jerine Natalia Aguirre Diaz</p>
+                    </div>
+                    <div style="padding: 15px; background: #111; border-radius: 8px; border-left: 3px solid gold;">
+                        <p style="margin: 10px 0;"><strong style="color: gold;">2.</strong> Victor David Montiel Perez</p>
+                    </div>
+                    <div style="padding: 15px; background: #111; border-radius: 8px; border-left: 3px solid gold;">
+                        <p style="margin: 10px 0;"><strong style="color: gold;">3.</strong> Erick Geovanni Sanchez Jaimes</p>
+                    </div>
+                    <div style="padding: 15px; background: #111; border-radius: 8px; border-left: 3px solid gold;">
+                        <p style="margin: 10px 0;"><strong style="color: gold;">4.</strong> Diego Geovanni Silva Ezquivel</p>
+                    </div>
+                    <div style="padding: 15px; background: #111; border-radius: 8px; border-left: 3px solid gold; grid-column: 1 / -1;">
+                        <p style="margin: 10px 0;"><strong style="color: gold;">5.</strong> Diego Uriel Ascencio Lopez</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px; margin-bottom: 40px;">
+                <h1 style="font-size: 80px; color: white; margin: 0; font-weight: bold; letter-spacing: 3px;">DIKET</h1>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DE PODCAST -->
+    <section id="podcastSection" class="hidden">
+        <div class="container">
+            <h2 style="color:gold; text-align:center;">Podcast DIKET</h2>
+            <div style="display:flex; justify-content:space-around; flex-wrap:wrap; gap:30px; margin-top:40px;">
+                <div style="background:#1a1a1a; padding:30px; border-radius:10px; width:400px; text-align:center; border:2px solid gold;">
+                    <h3 style="color:gold;">podcast español version</h3>
+                    <audio id="audio1" controls style="width:100%; margin-top:20px;">
+                        <source src="audio/PODCAST%20ESPA%C3%91OL%202.mp3" type="audio/mpeg">
+                        Tu navegador no soporta audio.
+                    </audio>
+                </div>
+                <div style="background:#1a1a1a; padding:30px; border-radius:10px; width:400px; text-align:center; border:2px solid gold;">
+                    <h3 style="color:gold;">ingles version</h3>
+                    <audio id="audio2" controls style="width:100%; margin-top:20px;">
+                        <source src="audio/PODCAST%20INGLES%202.mp3" type="audio/mpeg">
+                        Tu navegador no soporta audio.
+                    </audio>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CARRITO LATERAL -->
+    <div id="cart">
+        <div class="cart-header">
+            <h3>Carrito</h3>
+            <button class="back-btn" onclick="toggleCart()">Regresar</button>
+        </div>
+        <ul id="cartItems"></ul>
+    </div>
+
+    <!-- SCRIPTS: datos, funciones y comportamiento -->
+    <script>
+        // DATOS
+        let productos = [
+            // MUJER
+            { nombre: "Vestido Negro Elegante", categoria: "mujer", color: "negro", link: "https://pin.it/2idyfzPWo", imagen:"https://cdn.phototourl.com/free/2026-06-03-3ec2c8cd-c002-4b2e-8265-2b18bd84adff.jpg", precio: 2999, rating: 4.8 },
+            { nombre: "Vestido Rojo Gala", categoria: "mujer", color: "rojo", link: "https://pin.it/4DQlFdKPE", imagen: "https://cdn.phototourl.com/free/2026-06-03-393dc78b-3b64-4850-9009-d28543c79a89.jpg", precio: 3299, rating: 4.9 },
+            { nombre: "Vestido Rosa Sofisticado", categoria: "mujer", color: "rosa", link: "https://pin.it/3FNkCwcKe", imagen: "https://cdn.phototourl.com/free/2026-06-03-0fb67bc6-a5f0-4343-a528-b54391620757.jpg", precio: 3199, rating: 4.6 },
+            { nombre: "Vestido Dorado Brillante", categoria: "mujer", color: "dorado", link: "https://pin.it/TIbCQ6RX4", imagen: "https://cdn.phototourl.com/free/2026-06-03-89e3ad0e-3c9d-410c-b0c1-93e9de5b3f59.jpg", precio: 3599, rating: 5 },
+            { nombre: "Vestido Azul Profundo", categoria: "mujer", color: "azul", link: "https://pin.it/21eeXCzdu", imagen: "https://cdn.phototourl.com/free/2026-06-03-72048968-9d93-4764-82ca-cdc1ea50b2a9.jpg", precio: 2799, rating: 4.5 },
+
+            // HOMBRE
+            { nombre: "Traje Negro Formal", categoria: "hombre", color: "negro", link: "https://pin.it/7x3wy8nfp", imagen: "https://cdn.phototourl.com/free/2026-06-03-4911182d-1879-48d3-b667-fbb4b20271c1.jpg", precio: 3299, rating: 4.8 },
+            { nombre: "Traje Rojo Moderno", categoria: "hombre", color: "rojo", link: "https://pin.it/3ipEU83Tk", imagen: "https://cdn.phototourl.com/free/2026-06-03-f212c23e-218f-4305-b1f3-dd65b81d6a2d.jpg", precio: 3599, rating: 4.9 },
+            { nombre: "Traje Vino Elegante", categoria: "hombre", color: "vino", link: "https://pin.it/356ZbxJ9e", imagen: "https://i.pinimg.com/736x/8f/8c/6f/8f8c6f267a673bc71d374d641bc20491.jpg", precio: 3199, rating: 4.7 },
+            { nombre: "Traje Gris Distinguido", categoria: "hombre", color: "gris", link: "https://pin.it/43u6e5gnX", imagen: "https://cdn.phototourl.com/free/2026-06-03-0ad3d5c3-e44c-4ed4-9f24-47d0a76d4e26.jpg", precio: 2999, rating: 4.6 },
+            { nombre: "Traje Azul Ejecutivo", categoria: "hombre", color: "azul", link: "https://pin.it/4VFI2tOak", imagen: "https://cdn.phototourl.com/free/2026-06-03-e2938e78-0ed1-4fe1-9245-5527a9b39ae8.jpg", precio: 3099, rating: 4.8 },
+            { nombre: "Traje Dorado Premium", categoria: "hombre", color: "dorado", link: "https://pin.it/3p6XE6JPV", imagen: "https://cdn.phototourl.com/free/2026-06-03-37599206-4a70-464b-8120-4be581823175.jpg", precio: 3999, rating: 5 }
+        ];
+
+        let carrito = [];
+
+        // MOSTRAR PRODUCTOS
+        function mostrar(lista) {
+            let cont = document.getElementById("products");
+            cont.innerHTML = "";
+
+            lista.forEach(p => {
+                let estrellas = "";
+                for (let i = 0; i < 5; i++) {
+                    if (i < Math.floor(p.rating)) {
+                        estrellas += '★';
+                    } else if (i < p.rating) {
+                        estrellas += '⭐';
+                    } else {
+                        estrellas += '☆';
+                    }
+                }
+                
+                cont.innerHTML += `
+                    <div class="card">
+                        <img src="${p.imagen}" alt="${p.nombre}" style="width:100%; height:250px; object-fit:cover; border-radius:8px; margin-bottom:10px;">
+                        <p>${p.nombre}</p>
+                        <div style="color: gold; font-size: 16px; margin-bottom: 8px;">${estrellas}</div>
+                        <p style="font-size: 14px; color: #aaa; margin: 5px 0;">${p.rating} / 5</p>
+                        <p style="font-size: 20px; color: gold; font-weight: bold; margin: 10px 0;">$${p.precio}</p>
+                        <a href="${p.link}" target="_blank">Ver diseño</a><br><br>
+                        <a href="${p.link}" target="_blank">
+                            <button class="buy" style="margin-bottom:8px; width:100%;">Comprar ahora</button>
+                        </a><br>
+                        <button class="buy" onclick="agregar('${p.nombre}')">Agregar al carrito</button>
+                    </div>
+                `;
+            });
+        }
+
+        // FILTROS
+        function showCategory(cat) {
+            mostrarProductos();
+            mostrar(productos.filter(p => p.categoria == cat));
+        }
+
+        function filterColor(color) {
+            mostrar(productos.filter(p => p.color == color));
+        }
+
+        // BUSCADOR
+        function toggleSearch() {
+            let s = document.getElementById("searchBar");
+            s.style.display = s.style.display == "block" ? "none" : "block";
+        }
+
+        function search() {
+            let val = document.getElementById("searchBar").value.toLowerCase();
+            mostrar(productos.filter(p => p.nombre.toLowerCase().includes(val)));
+        }
+
+        // CARRITO
+        function toggleCart() {
+            let c = document.getElementById("cart");
+            c.style.display = c.style.display == "block" ? "none" : "block";
+        }
+
+        function agregar(nombre) {
+            carrito.push(nombre);
+            actualizarCarrito();
+            document.getElementById("cart").style.display = "block";
+        }
+
+        function eliminarDelCarrito(index) {
+            carrito.splice(index, 1);
+            actualizarCarrito();
+        }
+
+        function actualizarCarrito() {
+            let lista = document.getElementById("cartItems");
+            lista.innerHTML = "";
+            carrito.forEach((item, index) => {
+                lista.innerHTML += `
+                    <li>
+                        ${item} 
+                        <button onclick="eliminarDelCarrito(${index})" style="margin-left:10px; background:red; color:white; border:none; cursor:pointer; padding:2px 6px; border-radius:4px;">
+                            Quitar
+                        </button>
+                    </li>`;
+            });
+        }
+
+        // TOGGLE NAV
+        let navOpen = true;
+        function toggleNav() {
+            let nav = document.querySelector('nav');
+            let body = document.body;
+            navOpen = !navOpen;
+            nav.classList.toggle('closed');
+            body.classList.toggle('nav-closed');
+        }
+
+        // NAVEGACIÓN ENTRE SECCIONES
+        function goToInicio() {
+            document.getElementById('inicioSection').classList.remove('hidden');
+            document.getElementById('productsSection').classList.add('hidden');
+            document.getElementById('historiaSection').classList.add('hidden');
+            document.getElementById('podcastSection').classList.add('hidden');
+        }
+
+        function goToTienda() {
+            document.getElementById('inicioSection').classList.add('hidden');
+            document.getElementById('productsSection').classList.remove('hidden');
+            document.getElementById('historiaSection').classList.add('hidden');
+            document.getElementById('podcastSection').classList.add('hidden');
+            mostrar(productos);
+        }
+
+        function mostrarProductos() {
+            document.getElementById('inicioSection').classList.add('hidden');
+            document.getElementById('productsSection').classList.remove('hidden');
+            document.getElementById('historiaSection').classList.add('hidden');
+            document.getElementById('podcastSection').classList.add('hidden');
+        }
+
+        function goToHistoria() {
+            document.getElementById('inicioSection').classList.add('hidden');
+            document.getElementById('productsSection').classList.add('hidden');
+            document.getElementById('historiaSection').classList.remove('hidden');
+            document.getElementById('podcastSection').classList.add('hidden');
+        }
+
+        function goToPodcast() {
+            document.getElementById('inicioSection').classList.add('hidden');
+            document.getElementById('productsSection').classList.add('hidden');
+            document.getElementById('historiaSection').classList.add('hidden');
+            document.getElementById('podcastSection').classList.remove('hidden');
+        }
+
+        // INICIO
+        mostrar(productos);
+    </script>
+</body>
+</html>
